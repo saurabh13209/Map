@@ -63,6 +63,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Intent intent = new Intent(MapsActivity.this, PositionService.class);
                     startService(intent);
+                }else{
+                    ActivityCompat.requestPermissions(MapsActivity.this , new String[]{Manifest.permission.ACCESS_FINE_LOCATION , Manifest.permission.ACCESS_COARSE_LOCATION} , 101);
                 }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -238,7 +240,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     JSONArray array = new JSONArray(response);
                     if (array.get(0).toString().equals("true")) {
                         Toast.makeText(MapsActivity.this, "Welcome " + Name, Toast.LENGTH_SHORT).show();
-                        shareHolder.AddUser(Name);
+                        shareHolder.AddUser(Name , Password);
                     } else {
                         Toast.makeText(MapsActivity.this, "No Account found", Toast.LENGTH_SHORT).show();
                     }
@@ -274,7 +276,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dialog.dismiss();
                 if (response.toString().equals("yes")) {
                     Toast.makeText(MapsActivity.this, "Account Created", Toast.LENGTH_SHORT).show();
-                    shareHolder.AddUser(Name);
+                    shareHolder.AddUser(Name , password);
                 } else {
                     Toast.makeText(MapsActivity.this, "Name Occupied", Toast.LENGTH_SHORT).show();
                 }

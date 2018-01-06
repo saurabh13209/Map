@@ -25,7 +25,7 @@ public class SettingActivity extends AppCompatActivity {
         shareHolder = new ShareHolder(SettingActivity.this);
     }
 
-    private class CustomAdapter extends BaseAdapter{
+    private class CustomAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -44,10 +44,10 @@ public class SettingActivity extends AppCompatActivity {
 
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
-            View settingView = getLayoutInflater().inflate(R.layout.setting_eachrow , null);
+            View settingView = getLayoutInflater().inflate(R.layout.setting_eachrow, null);
             final TextView Setting = settingView.findViewById(R.id.SettingName);
             ImageView image = settingView.findViewById(R.id.SettingImage);
-            switch (i){
+            switch (i) {
                 case 0:
                     Setting.setText("Profile Setting");
                     image.setImageResource(R.mipmap.ic_person);
@@ -62,16 +62,18 @@ public class SettingActivity extends AppCompatActivity {
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    switch (i){
+                    switch (i) {
                         case 0:
-                           if (shareHolder.isUser()){
-                                startActivity(new Intent(SettingActivity.this , ProfileActivity.class));
-                           }else {
-                               Toast.makeText(SettingActivity.this, "Login to use this", Toast.LENGTH_SHORT).show();
-                           }
-                           break;
+                            if (shareHolder.isUser()) {
+                                startActivity(new Intent(SettingActivity.this, ProfileActivity.class));
+                                finish();
+                            } else {
+                                Toast.makeText(SettingActivity.this, "Login to use this", Toast.LENGTH_SHORT).show();
+                            }
+                            break;
                         case 1:
-                            startActivity(new Intent(SettingActivity.this , MapSettingActivity.class));
+                            startActivity(new Intent(SettingActivity.this, MapSettingActivity.class));
+                            finish();
                             break;
                     }
                 }
