@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         tools:context="com.saurabh.tuar.MapsActivity" />
 
+
     <Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,12 +21,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
             <EditText
                 android:id="@+id/MapName"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="30dp"
+                android:layout_weight="1"
                 android:background="@android:color/white"
                 android:hint="Search Your friend.."
                 android:imeOptions="actionSearch"
@@ -36,13 +38,23 @@
                 android:id="@+id/MapSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="30dp"
-                android:src="@android:drawable/ic_menu_search"
                 android:background="@android:color/white"
-                android:layout_marginRight="10dp" />
+                android:src="@android:drawable/ic_menu_search" />
 
         </LinearLayout>
     </Toolbar>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/SettingFloating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="40dp"
+        android:src="@mipmap/ic_settings" />
 </RelativeLayout>
 
 

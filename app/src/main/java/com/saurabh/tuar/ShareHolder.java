@@ -48,4 +48,14 @@ public class ShareHolder {
     public String getName() {
         return sharedPreferences.getString("Name","");
     }
+
+    public void setMap(String map){
+        Editor editor = sharedPreferences.edit();
+        editor.putString("map" , map);
+        editor.commit();
+    }
+
+    public String getMap(){
+        return sharedPreferences.getString("map","");
+    }
 }

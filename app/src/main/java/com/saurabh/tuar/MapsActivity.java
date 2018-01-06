@@ -5,15 +5,20 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -48,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ShareHolder shareHolder;
     private AlertDialog dialog;
     private LatLng position = new LatLng(-34, 151);
+    private FloatingActionButton setting;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -83,6 +90,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         editText = findViewById(R.id.MapName);
 
         shareHolder = new ShareHolder(MapsActivity.this);
+        
+        setting = findViewById(R.id.SettingFloating);
+        
+        settingFloatingButtonAction();
 
 
         if (shareHolder.isUser()) {
@@ -117,6 +128,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+
+    private void settingFloatingButtonAction() {
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MapsActivity.this , SettingActivity.class));
+            }
+        });
+    }
+
 
     private void SearchMain() {
         progressDialog = new ProgressDialog(MapsActivity.this);
@@ -184,7 +205,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             if (Password.getText().toString().length() > 3) {
                                 progressDialog.show();
                                 createAccount(Name.getText().toString(), Password.getText().toString());
-                            }else {
+                            } else {
                                 Toast.makeText(MapsActivity.this, "Password length minimum of 4 character", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -280,8 +301,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        setMapType();
         setLocation(position);
+    }
+
+    private void setMapType() {
+        switch (shareHolder.getMap()){
+            case "":
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                break;
+            case "normal":
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                break;
+            case "sate":
+                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                break;
+            case "hybrid":
+                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        try{
+            setMapType();
+        }catch (Exception e){}
+        super.onResume();
     }
 
     public void setLocation(LatLng latLng) {
