@@ -55,6 +55,15 @@
         android:layout_marginBottom="40dp"
         android:layout_marginRight="40dp"
         android:src="@mipmap/ic_settings" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/RefreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="40dp"
+        android:src="@mipmap/ic_refresh"/>
 </RelativeLayout>
 
 

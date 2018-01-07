@@ -54,13 +54,13 @@ public class MapSettingActivity extends AppCompatActivity {
                 case 1:
                     image.setImageResource(R.drawable.sate);
                     Major.setText("Satellite");
-                    Minor.setText("Map show Satellite View + No name of location and place");
+                    Minor.setText("Shows Satellite Map View");
                     break;
 
                 case 2:
                     image.setImageResource(R.drawable.hybrid);
                     Major.setText("Hybrid Map");
-                    Minor.setText("Map show Satellite View + Give name of location and surrounding");
+                    Minor.setText("shows 'Hybrid Map' type of map view and give name of place and surroundings");
                     break;
 
             }

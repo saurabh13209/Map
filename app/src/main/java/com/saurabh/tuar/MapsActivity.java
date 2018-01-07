@@ -37,7 +37,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ProgressDialog progressDialog;
     private ShareHolder shareHolder;
     private LatLng position = new LatLng(-34, 151);
-    private FloatingActionButton setting;
+    private FloatingActionButton setting , Refresh;
 
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
@@ -95,6 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         editText = findViewById(R.id.MapName);
         shareHolder = new ShareHolder(MapsActivity.this);
         setting = findViewById(R.id.SettingFloating);
+        Refresh = findViewById(R.id.RefreshButton);
 
         settingFloatingButtonAction();
         builder = new AlertDialog.Builder(MapsActivity.this);
@@ -140,12 +140,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(new Intent(MapsActivity.this, SettingActivity.class));
             }
         });
+
+        Refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (shareHolder.isUser()){
+                    if (!editText.getText().toString().equals("")){
+                        SearchMain();
+                    }else {
+                        position = new LatLng(Double.valueOf(shareHolder.getLat()) , Double.valueOf(shareHolder.getLng()));
+                        setLocation(position);
+                    }
+                }else {
+                    Toast.makeText(MapsActivity.this, "Login to Use this feature", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
     private void SearchMain() {
 
         if (shareHolder.isUser()) {
+            if (editText.getText().toString().equals("")){
+                return;
+            }
             progressDialog.show();
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://browbeaten-fingers.000webhostapp.com/FindMe/getLocation.php", new Response.Listener<String>() {
@@ -360,7 +379,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         CameraPosition cameraPosition = CameraPosition.builder().target(latLng).zoom(17).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions().position(latLng).title(editText.getText().toString()+"'s Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 }
