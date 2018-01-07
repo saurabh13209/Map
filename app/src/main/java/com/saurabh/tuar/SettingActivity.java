@@ -1,11 +1,16 @@
 package com.saurabh.tuar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -20,16 +25,20 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        shareHolder = new ShareHolder(SettingActivity.this);
         listView = findViewById(R.id.SettingList);
         listView.setAdapter(new CustomAdapter());
-        shareHolder = new ShareHolder(SettingActivity.this);
     }
 
     private class CustomAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            return 2;
+            if (shareHolder.isUser()){
+                return 3;
+            }else{
+                return 2;
+            }
         }
 
         @Override
@@ -56,6 +65,12 @@ public class SettingActivity extends AppCompatActivity {
                     Setting.setText("Maps Setting");
                     image.setImageResource(R.mipmap.ic_map);
                     break;
+                case 2:
+                    Setting.setText("Sign Out");
+                    Setting.setTextColor(getResources().getColor(R.color.RED));
+                    image.setImageResource(R.mipmap.ic_out);
+                    break;
+
             }
 
             LinearLayout linearLayout = settingView.findViewById(R.id.SettingEachLayout);
@@ -74,6 +89,28 @@ public class SettingActivity extends AppCompatActivity {
                         case 1:
                             startActivity(new Intent(SettingActivity.this, MapSettingActivity.class));
                             finish();
+                            break;
+                        case 2:
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                            View PassView = getLayoutInflater().inflate(R.layout.password_layout , null);
+                            final EditText editText = PassView.findViewById(R.id.PasswordLayEditText);
+                            Button btn = PassView.findViewById(R.id.PasswordLayButton);
+
+                            btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (shareHolder.getPassword().toString().equals(editText.getText().toString())){
+                                        shareHolder.setName("");
+                                        shareHolder.setPassword("");
+                                        Toast.makeText(SettingActivity.this, "Signed Out", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(SettingActivity.this , MapsActivity.class));
+                                        finish();
+                                    }
+                                }
+                            });
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
                             break;
                     }
                 }

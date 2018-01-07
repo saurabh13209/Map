@@ -84,7 +84,6 @@ public class MapSettingActivity extends AppCompatActivity {
                             startActivity(new Intent(MapSettingActivity.this , MapsActivity.class));
                             finish();
                             break;
-
                     }
                 }
             });

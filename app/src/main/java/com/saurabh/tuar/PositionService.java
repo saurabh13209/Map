@@ -68,7 +68,9 @@ public class PositionService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if ((ActivityCompat.checkSelfPermission(PositionService.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 0, locationListener);
+            if (shareHolder.getName()!=""){   // Not Sign Out...
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 0, locationListener);
+            }
         }else {
             Toast.makeText(this, "Permissions are Denied..", Toast.LENGTH_SHORT).show();
         }
