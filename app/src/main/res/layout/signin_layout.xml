@@ -55,5 +55,14 @@
         android:textAllCaps="false"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/SignInLogInButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Already have an account?"
+        android:textAlignment="center"
+        android:textColor="#0000FF" />
+
 
 </LinearLayout>

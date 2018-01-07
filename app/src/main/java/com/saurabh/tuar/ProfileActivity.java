@@ -66,6 +66,8 @@ public class ProfileActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                Toast.makeText(ProfileActivity.this, "Sorry ,  Please try again..", Toast.LENGTH_SHORT).show();
 
             }
         }) {

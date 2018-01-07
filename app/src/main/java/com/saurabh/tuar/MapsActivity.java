@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -16,9 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -41,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,9 +49,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageButton imageButton;
     private ProgressDialog progressDialog;
     private ShareHolder shareHolder;
-    private AlertDialog dialog;
     private LatLng position = new LatLng(-34, 151);
     private FloatingActionButton setting;
+
+    private AlertDialog.Builder builder;
+    private AlertDialog dialog;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -63,8 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Intent intent = new Intent(MapsActivity.this, PositionService.class);
                     startService(intent);
-                }else{
-                    ActivityCompat.requestPermissions(MapsActivity.this , new String[]{Manifest.permission.ACCESS_FINE_LOCATION , Manifest.permission.ACCESS_COARSE_LOCATION} , 101);
+                } else {
+                    ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
                 }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -75,6 +74,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+
+        progressDialog = new ProgressDialog(MapsActivity.this);
+        progressDialog.setMessage("Please Wait");
+        progressDialog.setCancelable(false);
 
         String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
@@ -90,13 +93,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         imageButton = findViewById(R.id.MapSearch);
         editText = findViewById(R.id.MapName);
-
         shareHolder = new ShareHolder(MapsActivity.this);
-        
         setting = findViewById(R.id.SettingFloating);
-        
-        settingFloatingButtonAction();
 
+        settingFloatingButtonAction();
+        builder = new AlertDialog.Builder(MapsActivity.this);
+        dialog = builder.create();
 
         if (shareHolder.isUser()) {
             if ((ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
@@ -135,16 +137,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MapsActivity.this , SettingActivity.class));
+                startActivity(new Intent(MapsActivity.this, SettingActivity.class));
             }
         });
     }
 
 
     private void SearchMain() {
-        progressDialog = new ProgressDialog(MapsActivity.this);
-        progressDialog.setMessage("Please Wait");
-        progressDialog.setCancelable(false);
 
         if (shareHolder.isUser()) {
             progressDialog.show();
@@ -184,49 +183,67 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             MySending.getInstance(MapsActivity.this).addToRequestQueue(stringRequest);
         } else {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-            View view = getLayoutInflater().inflate(R.layout.login_layout, null);
-            builder.setView(view);
-
-            dialog = builder.create();
-            dialog.show();
-
-            TextView SingInButton = view.findViewById(R.id.SignInButtob);
-            SingInButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    dialog.setContentView(R.layout.signin_layout);
-                    Button next = dialog.getWindow().getDecorView().findViewById(R.id.CreateAccountButton);
-
-                    final EditText Name = dialog.getWindow().getDecorView().findViewById(R.id.CreateAccountUserName);
-                    final EditText Password = dialog.getWindow().getDecorView().findViewById(R.id.CreateAccountUserPassword);
-                    next.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (Password.getText().toString().length() > 3) {
-                                progressDialog.show();
-                                createAccount(Name.getText().toString(), Password.getText().toString());
-                            } else {
-                                Toast.makeText(MapsActivity.this, "Password length minimum of 4 character", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                }
-            });
-
-            Button Login = view.findViewById(R.id.LoginButton);
-            final EditText Name = view.findViewById(R.id.LoginUserName);
-            final EditText Pass = view.findViewById(R.id.LoginUserPassword);
-            Login.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    progressDialog.show();
-                    LoginUser(Name.getText().toString(), Pass.getText().toString());
-                }
-            });
+            SetLoginUserView();
         }
 
+    }
+
+    private void SetLoginUserView() {
+        View view = getLayoutInflater().inflate(R.layout.login_layout , null);
+        builder.setView(view);
+        dialog = builder.create();
+        dialog.show();
+
+        TextView SingInButton = view.findViewById(R.id.SignInButtob);
+        SingInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                SetCreateAccountView();
+            }
+        });
+
+        Button Login = view.findViewById(R.id.LoginButton);
+        final EditText Name =  view.findViewById(R.id.LoginUserName);
+        final EditText Pass =  view.findViewById(R.id.LoginUserPassword);
+        Login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog.show();
+                LoginUser(Name.getText().toString(), Pass.getText().toString());
+            }
+        });
+    }
+
+    private void SetCreateAccountView() {
+        View view = getLayoutInflater().inflate(R.layout.signin_layout , null);
+        builder.setView(view);
+        dialog = builder.create();
+        dialog.show();
+        Button next = dialog.getWindow().getDecorView().findViewById(R.id.CreateAccountButton);
+
+        final EditText Name = view.findViewById(R.id.CreateAccountUserName);
+        final EditText Password = dialog.getWindow().getDecorView().findViewById(R.id.CreateAccountUserPassword);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Password.getText().toString().length() > 3) {
+                    progressDialog.show();
+                    createAccount(Name.getText().toString(), Password.getText().toString());
+                } else {
+                    Toast.makeText(MapsActivity.this, "Password length minimum of 4 character", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        TextView Log = dialog.getWindow().getDecorView().findViewById(R.id.SignInLogInButton);
+        Log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                SetLoginUserView();
+            }
+        });
     }
 
     private void LoginUser(final String Name, final String Password) {
@@ -238,9 +255,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("return_ans", response.toString());
                 try {
                     JSONArray array = new JSONArray(response);
-                    if (array.get(0).toString().equals("true")) {
+                    if (array.length()>1) {
                         Toast.makeText(MapsActivity.this, "Welcome " + Name, Toast.LENGTH_SHORT).show();
-                        shareHolder.AddUser(Name , Password);
+                        position = new LatLng(Double.valueOf(array.get(0).toString()) , Double.valueOf(array.get(1).toString()) );
+                        setLocation(position);
+                        shareHolder.AddUser(Name, Password);
                     } else {
                         Toast.makeText(MapsActivity.this, "No Account found", Toast.LENGTH_SHORT).show();
                     }
@@ -276,7 +295,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dialog.dismiss();
                 if (response.toString().equals("yes")) {
                     Toast.makeText(MapsActivity.this, "Account Created", Toast.LENGTH_SHORT).show();
-                    shareHolder.AddUser(Name , password);
+                    shareHolder.AddUser(Name, password);
                 } else {
                     Toast.makeText(MapsActivity.this, "Name Occupied", Toast.LENGTH_SHORT).show();
                 }
@@ -305,10 +324,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         setMapType();
         setLocation(position);
+        if (!shareHolder.isUser()){
+            SetCreateAccountView();
+
+        }
     }
 
     private void setMapType() {
-        switch (shareHolder.getMap()){
+        switch (shareHolder.getMap()) {
             case "":
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 break;
@@ -326,9 +349,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onResume() {
-        try{
+        try {
             setMapType();
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
         super.onResume();
     }
 
