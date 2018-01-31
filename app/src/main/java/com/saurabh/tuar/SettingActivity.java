@@ -96,6 +96,7 @@ public class SettingActivity extends AppCompatActivity {
                             View PassView = getLayoutInflater().inflate(R.layout.password_layout , null);
                             final EditText editText = PassView.findViewById(R.id.PasswordLayEditText);
                             Button btn = PassView.findViewById(R.id.PasswordLayButton);
+                            builder.setView(PassView);
 
                             btn.setOnClickListener(new View.OnClickListener() {
                                 @Override
