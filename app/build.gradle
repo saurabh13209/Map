@@ -1,14 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'Main'
-            keyPassword 'sunshine'
-            storeFile file('E:/Android App/Tuar_Main/Key.jks')
-            storePassword 'sunshine'
-        }
-    }
+
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.saurabh.tuar"
@@ -34,6 +27,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'com.mcxiaoke.volley:library:1.0.18'// json
-    compile 'com.android.support:design:26.1.0' //floating button
+    implementation 'com.mcxiaoke.volley:library:1.0.18'// json
+    implementation 'com.android.support:design:26.1.0' //floating button
 }
